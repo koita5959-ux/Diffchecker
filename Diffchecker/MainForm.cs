@@ -32,6 +32,7 @@ namespace DesktopKit.Diffchecker
         private Label lblPanel2Title = null!;
         private RichTextBox rtbFile2 = null!;
         private Button btnExport = null!;
+        private Label lblTabOption = null!;
 
         /// <summary>最後の差分検出結果（レポート出力で使用）</summary>
         private List<DiffLine> _lastDiffResult = new();
@@ -73,7 +74,7 @@ namespace DesktopKit.Diffchecker
             // ファイル1
             lblFile1 = new Label
             {
-                Text = "ファイル1:",
+                Text = "ファイル①:",
                 Location = new Point(10, 12),
                 AutoSize = true
             };
@@ -101,7 +102,7 @@ namespace DesktopKit.Diffchecker
             // ファイル2
             lblFile2 = new Label
             {
-                Text = "ファイル2:",
+                Text = "ファイル②:",
                 Location = new Point(10, 45),
                 AutoSize = true
             };
@@ -154,7 +155,7 @@ namespace DesktopKit.Diffchecker
             // Panel1: ファイル1
             lblPanel1Title = new Label
             {
-                Text = "ファイル1",
+                Text = "ファイル①",
                 Dock = DockStyle.Top,
                 Height = 22
             };
@@ -172,7 +173,7 @@ namespace DesktopKit.Diffchecker
             // Panel2: ファイル2
             lblPanel2Title = new Label
             {
-                Text = "ファイル2",
+                Text = "ファイル②",
                 Dock = DockStyle.Top,
                 Height = 22
             };
@@ -198,12 +199,28 @@ namespace DesktopKit.Diffchecker
             btnExport = new Button
             {
                 Text = "レポート出力",
-                Location = new Point(10, 8),
                 Size = new Size(120, 28),
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Right,
                 Enabled = false
             };
+            btnExport.Location = new Point(bottomPanel.ClientSize.Width - bottomPanel.Padding.Right - btnExport.Width, 8);
             btnExport.Click += BtnExport_Click;
 
+            lblTabOption = new Label
+            {
+                Text = "フォーマットオプション",
+                AutoSize = true,
+                Font = new Font("Meiryo", 7.5f),
+                ForeColor = Color.Blue,
+                Cursor = Cursors.Hand,
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Right
+            };
+            lblTabOption.Location = new Point(btnExport.Left - lblTabOption.PreferredWidth - 20, 15);
+            lblTabOption.Click += LblTabOption_Click;
+            lblTabOption.MouseEnter += (s, e) => lblTabOption.Font = new Font(lblTabOption.Font, FontStyle.Underline);
+            lblTabOption.MouseLeave += (s, e) => lblTabOption.Font = new Font(lblTabOption.Font, FontStyle.Regular);
+
+            bottomPanel.Controls.Add(lblTabOption);
             bottomPanel.Controls.Add(btnExport);
 
             // --- フォームに追加 ---
@@ -220,7 +237,7 @@ namespace DesktopKit.Diffchecker
         /// </summary>
         private void BtnBrowse1_Click(object? sender, EventArgs e)
         {
-            var path = FileDialogHelper.SelectFile("ファイル1を選択してください", FileFilter);
+            var path = FileDialogHelper.SelectFile("ファイル①を選択してください", FileFilter);
             if (path != null)
             {
                 txtFile1Path.Text = path;
@@ -233,7 +250,7 @@ namespace DesktopKit.Diffchecker
         /// </summary>
         private void BtnBrowse2_Click(object? sender, EventArgs e)
         {
-            var path = FileDialogHelper.SelectFile("ファイル2を選択してください", FileFilter);
+            var path = FileDialogHelper.SelectFile("ファイル②を選択してください", FileFilter);
             if (path != null)
             {
                 txtFile2Path.Text = path;
@@ -316,6 +333,24 @@ namespace DesktopKit.Diffchecker
         }
 
         /// <summary>
+        /// タブ指定オプションラベルのClickイベントハンドラ。カラム表示設定ダイアログを表示する。
+        /// </summary>
+        private void LblTabOption_Click(object? sender, EventArgs e)
+        {
+            bool useColumn = _settings.Get("Diffchecker.UseColumnMode", "false") == "true";
+            int maxWidth = int.TryParse(_settings.Get("Diffchecker.MaxColumnWidth", "120"), out var w) ? w : 120;
+            int tabWidth = int.TryParse(_settings.Get("Diffchecker.TabWidth", "8"), out var t) ? t : 8;
+
+            using var form = new TabOptionForm(useColumn, maxWidth, tabWidth);
+            if (form.ShowDialog(this) == DialogResult.OK)
+            {
+                _settings.Set("Diffchecker.UseColumnMode", form.UseColumnMode ? "true" : "false");
+                _settings.Set("Diffchecker.MaxColumnWidth", form.MaxColumnWidth.ToString());
+                _settings.Set("Diffchecker.TabWidth", form.TabWidth.ToString());
+            }
+        }
+
+        /// <summary>
         /// レポート出力ボタンのClickイベントハンドラ。差分レポートをテキストファイルとして保存する。
         /// </summary>
         private void BtnExport_Click(object? sender, EventArgs e)
@@ -337,8 +372,13 @@ namespace DesktopKit.Diffchecker
 
             if (savePath == null) return;
 
+            // カラム表示モード設定の読み出し
+            bool useColumn = _settings.Get("Diffchecker.UseColumnMode", "false") == "true";
+            int maxWidth = int.TryParse(_settings.Get("Diffchecker.MaxColumnWidth", "120"), out var w) ? w : 120;
+            int tabWidth = int.TryParse(_settings.Get("Diffchecker.TabWidth", "8"), out var t) ? t : 8;
+
             // レポート保存
-            DiffReporter.Export(savePath, txtFile1Path.Text, txtFile2Path.Text, _lastDiffResult);
+            DiffReporter.Export(savePath, txtFile1Path.Text, txtFile2Path.Text, _lastDiffResult, useColumn, maxWidth, tabWidth);
 
             // 保存先ディレクトリを記憶
             var saveDir = Path.GetDirectoryName(savePath);
