@@ -46,6 +46,15 @@ namespace DesktopKit.Diffchecker
         {
             ComponentName = "Diffchecker";
             InitializeControls();
+            Load += MainForm_Load;
+        }
+
+        /// <summary>
+        /// フォームのLoadイベント。SplitContainerを均等分割に設定する。
+        /// </summary>
+        private void MainForm_Load(object? sender, EventArgs e)
+        {
+            splitDiff.SplitterDistance = ClientSize.Width / 2;
         }
 
         /// <summary>
@@ -69,22 +78,25 @@ namespace DesktopKit.Diffchecker
                 AutoSize = true
             };
 
-            txtFile1Path = new TextBox
-            {
-                ReadOnly = true,
-                Location = new Point(90, 10),
-                Size = new Size(600, 23),
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
-            };
-
             btnBrowse1 = new Button
             {
                 Text = "参照",
-                Location = new Point(700, 8),
                 Size = new Size(60, 28),
                 Anchor = AnchorStyles.Top | AnchorStyles.Right
             };
+            btnBrowse1.Location = new Point(topPanel.ClientSize.Width - topPanel.Padding.Right - btnBrowse1.Width, 8);
             btnBrowse1.Click += BtnBrowse1_Click;
+
+            txtFile1Path = new TextBox
+            {
+                ReadOnly = true,
+                AllowDrop = true,
+                Location = new Point(90, 10),
+                Size = new Size(btnBrowse1.Left - 90 - 6, 23),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            };
+            txtFile1Path.DragEnter += TextBox_DragEnter;
+            txtFile1Path.DragDrop += TxtFile1Path_DragDrop;
 
             // ファイル2
             lblFile2 = new Label
@@ -94,22 +106,25 @@ namespace DesktopKit.Diffchecker
                 AutoSize = true
             };
 
-            txtFile2Path = new TextBox
-            {
-                ReadOnly = true,
-                Location = new Point(90, 43),
-                Size = new Size(600, 23),
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
-            };
-
             btnBrowse2 = new Button
             {
                 Text = "参照",
-                Location = new Point(700, 41),
                 Size = new Size(60, 28),
                 Anchor = AnchorStyles.Top | AnchorStyles.Right
             };
+            btnBrowse2.Location = new Point(topPanel.ClientSize.Width - topPanel.Padding.Right - btnBrowse2.Width, 41);
             btnBrowse2.Click += BtnBrowse2_Click;
+
+            txtFile2Path = new TextBox
+            {
+                ReadOnly = true,
+                AllowDrop = true,
+                Location = new Point(90, 43),
+                Size = new Size(btnBrowse2.Left - 90 - 6, 23),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            };
+            txtFile2Path.DragEnter += TextBox_DragEnter;
+            txtFile2Path.DragDrop += TxtFile2Path_DragDrop;
 
             // 比較ボタン
             btnCompare = new Button
@@ -342,6 +357,45 @@ namespace DesktopKit.Diffchecker
         {
             btnCompare.Enabled = !string.IsNullOrEmpty(txtFile1Path.Text)
                               && !string.IsNullOrEmpty(txtFile2Path.Text);
+        }
+
+        /// <summary>
+        /// テキストボックスへのドラッグ進入時にファイルドロップを許可する。
+        /// </summary>
+        private void TextBox_DragEnter(object? sender, DragEventArgs e)
+        {
+            if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true)
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        /// <summary>
+        /// ファイル1テキストボックスへのドロップ処理。
+        /// </summary>
+        private void TxtFile1Path_DragDrop(object? sender, DragEventArgs e)
+        {
+            if (e.Data?.GetData(DataFormats.FileDrop) is string[] files && files.Length > 0)
+            {
+                txtFile1Path.Text = files[0];
+                UpdateCompareButtonState();
+            }
+        }
+
+        /// <summary>
+        /// ファイル2テキストボックスへのドロップ処理。
+        /// </summary>
+        private void TxtFile2Path_DragDrop(object? sender, DragEventArgs e)
+        {
+            if (e.Data?.GetData(DataFormats.FileDrop) is string[] files && files.Length > 0)
+            {
+                txtFile2Path.Text = files[0];
+                UpdateCompareButtonState();
+            }
         }
     }
 }
