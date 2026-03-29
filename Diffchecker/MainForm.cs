@@ -10,18 +10,18 @@ namespace DesktopKit.Diffchecker
     public class MainForm : BaseForm
     {
         private Label lblFile1 = null!;
-        private TextBox txtFile1 = null!;
+        private TextBox txtFile1Path = null!;
         private Button btnBrowse1 = null!;
         private Label lblFile2 = null!;
-        private TextBox txtFile2 = null!;
+        private TextBox txtFile2Path = null!;
         private Button btnBrowse2 = null!;
         private Button btnCompare = null!;
-        private SplitContainer splitContainer = null!;
+        private SplitContainer splitDiff = null!;
         private Label lblPanel1Title = null!;
         private RichTextBox rtbFile1 = null!;
         private Label lblPanel2Title = null!;
         private RichTextBox rtbFile2 = null!;
-        private Button btnExportReport = null!;
+        private Button btnExport = null!;
 
         /// <summary>
         /// MainFormのコンストラクタ。
@@ -32,6 +32,9 @@ namespace DesktopKit.Diffchecker
             InitializeControls();
         }
 
+        /// <summary>
+        /// UIコントロールを初期化・配置する。
+        /// </summary>
         private void InitializeControls()
         {
             // --- 上部パネル: ファイル選択 + 比較ボタン ---
@@ -50,7 +53,7 @@ namespace DesktopKit.Diffchecker
                 AutoSize = true
             };
 
-            txtFile1 = new TextBox
+            txtFile1Path = new TextBox
             {
                 ReadOnly = true,
                 Location = new Point(90, 10),
@@ -65,6 +68,7 @@ namespace DesktopKit.Diffchecker
                 Size = new Size(60, 28),
                 Anchor = AnchorStyles.Top | AnchorStyles.Right
             };
+            btnBrowse1.Click += BtnBrowse1_Click;
 
             // ファイル2
             lblFile2 = new Label
@@ -74,7 +78,7 @@ namespace DesktopKit.Diffchecker
                 AutoSize = true
             };
 
-            txtFile2 = new TextBox
+            txtFile2Path = new TextBox
             {
                 ReadOnly = true,
                 Location = new Point(90, 43),
@@ -89,24 +93,27 @@ namespace DesktopKit.Diffchecker
                 Size = new Size(60, 28),
                 Anchor = AnchorStyles.Top | AnchorStyles.Right
             };
+            btnBrowse2.Click += BtnBrowse2_Click;
 
             // 比較ボタン
             btnCompare = new Button
             {
                 Text = "比較",
                 Location = new Point(10, 73),
-                Size = new Size(100, 28)
+                Size = new Size(100, 28),
+                Enabled = false
             };
+            btnCompare.Click += BtnCompare_Click;
 
             topPanel.Controls.AddRange(new Control[]
             {
-                lblFile1, txtFile1, btnBrowse1,
-                lblFile2, txtFile2, btnBrowse2,
+                lblFile1, txtFile1Path, btnBrowse1,
+                lblFile2, txtFile2Path, btnBrowse2,
                 btnCompare
             });
 
             // --- 中央: SplitContainer ---
-            splitContainer = new SplitContainer
+            splitDiff = new SplitContainer
             {
                 Dock = DockStyle.Fill,
                 Orientation = Orientation.Vertical,
@@ -124,11 +131,12 @@ namespace DesktopKit.Diffchecker
             rtbFile1 = new RichTextBox
             {
                 Dock = DockStyle.Fill,
-                ReadOnly = true
+                ReadOnly = true,
+                WordWrap = false
             };
 
-            splitContainer.Panel1.Controls.Add(rtbFile1);
-            splitContainer.Panel1.Controls.Add(lblPanel1Title);
+            splitDiff.Panel1.Controls.Add(rtbFile1);
+            splitDiff.Panel1.Controls.Add(lblPanel1Title);
 
             // Panel2: ファイル2
             lblPanel2Title = new Label
@@ -141,11 +149,12 @@ namespace DesktopKit.Diffchecker
             rtbFile2 = new RichTextBox
             {
                 Dock = DockStyle.Fill,
-                ReadOnly = true
+                ReadOnly = true,
+                WordWrap = false
             };
 
-            splitContainer.Panel2.Controls.Add(rtbFile2);
-            splitContainer.Panel2.Controls.Add(lblPanel2Title);
+            splitDiff.Panel2.Controls.Add(rtbFile2);
+            splitDiff.Panel2.Controls.Add(lblPanel2Title);
 
             // --- 下部パネル: レポート出力ボタン ---
             var bottomPanel = new Panel
@@ -155,19 +164,49 @@ namespace DesktopKit.Diffchecker
                 Padding = new Padding(10, 5, 10, 5)
             };
 
-            btnExportReport = new Button
+            btnExport = new Button
             {
                 Text = "レポート出力",
                 Location = new Point(10, 8),
-                Size = new Size(120, 28)
+                Size = new Size(120, 28),
+                Enabled = false
             };
+            btnExport.Click += BtnExport_Click;
 
-            bottomPanel.Controls.Add(btnExportReport);
+            bottomPanel.Controls.Add(btnExport);
 
             // --- フォームに追加 ---
-            Controls.Add(splitContainer);
+            Controls.Add(splitDiff);
             Controls.Add(topPanel);
             Controls.Add(bottomPanel);
+        }
+
+        /// <summary>
+        /// 参照ボタン1のClickイベントハンドラ。
+        /// </summary>
+        private void BtnBrowse1_Click(object? sender, System.EventArgs e)
+        {
+        }
+
+        /// <summary>
+        /// 参照ボタン2のClickイベントハンドラ。
+        /// </summary>
+        private void BtnBrowse2_Click(object? sender, System.EventArgs e)
+        {
+        }
+
+        /// <summary>
+        /// 比較ボタンのClickイベントハンドラ。
+        /// </summary>
+        private void BtnCompare_Click(object? sender, System.EventArgs e)
+        {
+        }
+
+        /// <summary>
+        /// レポート出力ボタンのClickイベントハンドラ。
+        /// </summary>
+        private void BtnExport_Click(object? sender, System.EventArgs e)
+        {
         }
     }
 }
