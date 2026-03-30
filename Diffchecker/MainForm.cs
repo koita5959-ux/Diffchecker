@@ -230,6 +230,9 @@ namespace DesktopKit.Diffchecker
 
             // 左右スクロール連動
             DiffRenderer.SetupScrollSync(rtbFile1, rtbFile2);
+
+            // StatusBar（リサイズグリップ）をウィンドウ最下層に配置
+            StatusBar.SendToBack();
         }
 
         /// <summary>

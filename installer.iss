@@ -1,6 +1,6 @@
 [Setup]
 AppName=DesktopKit Diffchecker
-AppVersion=1.0
+AppVersion=1.01
 AppPublisher=DesktopKit Project
 DefaultDirName={autopf}\DesktopKit\Diffchecker
 DefaultGroupName=DesktopKit Diffchecker
