@@ -14,11 +14,6 @@ ArchitecturesInstallIn64BitMode=x64compatible
 
 [Files]
 Source: "publish\DesktopKit.Diffchecker.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "publish\D3DCompiler_47_cor3.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "publish\PenImc_cor3.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "publish\PresentationNative_cor3.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "publish\vcruntime140_cor3.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "publish\wpfgfx_cor3.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "_works\Diffchecker.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "ご利用にあたって.txt"; DestDir: "{app}"; Flags: ignoreversion
 
