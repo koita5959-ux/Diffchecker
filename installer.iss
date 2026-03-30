@@ -4,7 +4,7 @@ AppVersion=1.0
 AppPublisher=DesktopKit Project
 DefaultDirName={autopf}\DesktopKit\Diffchecker
 DefaultGroupName=DesktopKit Diffchecker
-UninstallDisplayIcon={app}\DesktopKit.Diffchecker.exe
+UninstallDisplayIcon={app}\Diffchecker.ico
 OutputDir=.
 OutputBaseFilename=DiffcheckerSetup
 SetupIconFile=_works\Diffchecker.ico
@@ -19,10 +19,11 @@ Source: "publish\PenImc_cor3.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "publish\PresentationNative_cor3.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "publish\vcruntime140_cor3.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "publish\wpfgfx_cor3.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ReadMe.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "_works\Diffchecker.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "ご利用にあたって.txt"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\DesktopKit Diffchecker"; Filename: "{app}\DesktopKit.Diffchecker.exe"; IconFilename: "{app}\DesktopKit.Diffchecker.exe"
+Name: "{group}\DesktopKit Diffchecker"; Filename: "{app}\DesktopKit.Diffchecker.exe"; IconFilename: "{app}\Diffchecker.ico"
 Name: "{group}\Uninstall DesktopKit Diffchecker"; Filename: "{uninstallexe}"
 
 [Run]
